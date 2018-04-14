@@ -100,5 +100,9 @@ ENV/
 # mypy
 .mypy_cache/
 
-#vs code 
+# vs code 
 .vscode
+
+# sqlalchemy
+migrations
+*.sqlite
