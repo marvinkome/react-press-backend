@@ -9,6 +9,7 @@ class Post(db.Model):
     title = db.Column(db.String(128), index=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    post_pic_url = db.Column(db.String(128))
 
     author_id = db.Column(db.Integer, db.ForeignKey('users.uuid'))
 
