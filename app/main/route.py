@@ -34,11 +34,19 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if not user:
-        return jsonify({'msg': 'Wrong email'})
+        return jsonify({
+            'msg': 'Email isn\'t correct. Please Check again',
+            'access_token': None,
+            'refresh_token': None
+        })
     
     check_psw = user.verify_password(password)
     if not check_psw:
-        return jsonify({'msg': 'Wrong password'})
+        return jsonify({
+            'msg': 'password isn\'t correct. Please Check again',
+            'access_token': None,
+            'refresh_token': None
+        })
 
     access_token = create_access_token(identity=user.email)
     refresh_token = create_refresh_token(identity=user.email)
@@ -57,7 +65,9 @@ def register():
 
     if (validate_password(password) is False):
         return jsonify({
-            'error': 'Password is not valid'
+            'msg': 'Password is not valid',
+            'access_token': None,
+            'refresh_token': None
         });
 
     user = User(
@@ -71,6 +81,7 @@ def register():
     access_token = create_access_token(identity=user.email)
     refresh_token = create_refresh_token(identity=user.email)
     return jsonify({
+        'msg': 'Profile Created',
         'access_token': access_token,
         'refresh_token': refresh_token
     })
