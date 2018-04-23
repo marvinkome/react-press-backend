@@ -63,3 +63,17 @@ class UpdatePost(graphene.Mutation):
         db.session.add(post)
         db.session.commit()
         return UpdatePost(post=post)
+
+class DeletePost(graphene.Mutation):
+    class Arguments:
+        post_id = graphene.Int(required=True)
+
+    post = graphene.Field(lambda: Post)
+
+    def mutate(self, info, post_id):
+        post = PostModel.query.filter_by(uuid=post_id).first()
+        if post is not None:
+            db.session.delete(post)
+            db.session.commit()
+        
+        return DeletePost(post=post)
