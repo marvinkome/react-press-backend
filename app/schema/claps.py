@@ -1,8 +1,9 @@
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from ..model import User as UserModel
+from ..model import Clap as ClapModel
 
-class User(SQLAlchemyObjectType):
+class Clap(SQLAlchemyObjectType):
     class Meta:
-        model = UserModel
+        model = ClapModel
         interfaces = (relay.Node, )
+

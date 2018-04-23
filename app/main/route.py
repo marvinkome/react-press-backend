@@ -1,9 +1,11 @@
 import re
-from flask import request, jsonify
+import os
+from flask import request, jsonify, url_for, send_from_directory, current_app as app
 from flask_graphql import GraphQLView
 from flask_jwt_extended import (jwt_required,
     create_access_token, create_refresh_token, get_jwt_identity,
     jwt_refresh_token_required)
+from werkzeug.utils import secure_filename
 from . import main
 from .. import db, jwt
 from ..model import User
@@ -26,6 +28,10 @@ def validate_password(password):
         return True
     else:
         return False
+
+def allowed_filename(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 @main.route('/login', methods=['POST','GET'])
 def login():
@@ -85,3 +91,27 @@ def register():
         'access_token': access_token,
         'refresh_token': refresh_token
     })
+
+@main.route('/', methods=['GET','POST'])
+def upload():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({
+                'msg': 'no file part'
+            })
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({
+                'msg': 'no selected file'
+            })
+        if file and allowed_filename(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return jsonify({
+                'msg': 'file uploaded',
+                'url': url_for('main.uploaded_file', filename=filename)
+            })
+
+@main.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)

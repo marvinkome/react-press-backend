@@ -3,8 +3,15 @@ from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyConnectionField
 from flask_jwt_extended import decode_token
 from .user import User
-from .post import Post
+from .post import Post, CreatePost, UpdatePost
 from .comment import Comment
+from .claps import Clap
+from .tags import Tags, CreateTag
+
+class Mutation(graphene.ObjectType):
+    create_post = CreatePost.Field()
+    update_post = UpdatePost.Field()
+    create_tag = CreateTag.Field()
 
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
@@ -25,15 +32,14 @@ class Query(graphene.ObjectType):
         query = Comment.get_query(info)
         return query.all()
 
-    def resolve_user(self, info):
+    def resolve_user(self, info , uuid):
         query = User.get_query(info)
-        token = info.context.headers.get('AUTHORIZATION')
-        token_type = decode_token(token)["type"]
-        email = None
-        if token_type == 'access':
-            email = decode_token(token)['identity']
-        # print(dir(query))
-        return query.filter_by(email=email).first()
+        # token = info.context.headers.get('AUTHORIZATION')
+        # token_type = decode_token(token)["type"]
+        # email = None
+        # if token_type == 'access':
+        #     email = decode_token(token)['identity']
+        # return query.filter_by(email=email).first()
+        return query.get(uuid)
 
-schema = graphene.Schema(query=Query, types=[User, Post])
-schema.execute('THE QUERY', middleware=[])
+schema = graphene.Schema(query=Query, mutation=Mutation, types=[User, Post])
