@@ -18,6 +18,7 @@ class User(db.Model):
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
     comment_replies = db.relationship('CommentReply', backref='author', lazy='dynamic')
+    claps = db.relationship('Clap', backref='author', lazy='dynamic')
 
     @property
     def password(self):
@@ -34,7 +35,7 @@ class User(db.Model):
         if request.is_secure:
             url = 'https://secure.gravatar.com/avatar'
         else:
-            url = 'http://wwwp .gravatar.com/avatar'
+            url = 'http://www.gravatar.com/avatar'
         hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash, size=size, default=default, rating=rating

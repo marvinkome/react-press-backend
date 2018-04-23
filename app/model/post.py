@@ -1,6 +1,7 @@
 from flask import current_app
-from .. import db
 from datetime import datetime
+from .. import db
+from .tags import TagsRelationship
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -14,6 +15,11 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.uuid'))
 
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    claps = db.relationship('Clap', backref='post', lazy='dynamic')
+    tags = db.relationship('Tags',
+                        secondary=TagsRelationship,
+                        backref=db.backref('posts', lazy='dynamic'),
+                        lazy='dynamic')
 
     def __repr__(self):
         return '<Post %r>' % self.title

@@ -8,6 +8,8 @@ class Config:
     WT_SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    UPLOAD_FOLDER = '/'
+    ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
     @staticmethod
     def init_app(app):
