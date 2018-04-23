@@ -16,7 +16,7 @@ def create_app(config_name):
 
     db.init_app(app)
     jwt.init_app(app)
-    cors.init_app(app, resources={r"/*": {"origins": "*"}})
+    cors.init_app(app)
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

@@ -2,7 +2,7 @@ import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyConnectionField
 from flask_jwt_extended import decode_token
-from .user import User
+from .user import User, UpdateProfilePic, UpdateInfo
 from .post import Post, CreatePost, UpdatePost, DeletePost
 from .comment import Comment
 from .claps import Clap
@@ -13,6 +13,9 @@ class Mutation(graphene.ObjectType):
     update_post = UpdatePost.Field()
     delete_post = DeletePost.Field()
     create_tag = CreateTag.Field()
+
+    update_user_profile_pic = UpdateProfilePic.Field()
+    update_user_info = UpdateInfo.Field()
 
 class Query(graphene.ObjectType):
     node = relay.Node.Field()

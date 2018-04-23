@@ -106,3 +106,6 @@ ENV/
 # sqlalchemy
 migrations
 *.sqlite
+
+# server images
+file_uploads

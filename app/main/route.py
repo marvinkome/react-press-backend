@@ -111,6 +111,9 @@ def upload():
                 'msg': 'file uploaded',
                 'url': url_for('main.uploaded_file', filename=filename)
             })
+    return jsonify({
+        'msg': 'This is the upload path'
+    })
 
 @main.route('/uploads/<filename>')
 def uploaded_file(filename):
