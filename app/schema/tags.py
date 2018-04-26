@@ -3,6 +3,7 @@ from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..model import Tags as TagModel, Post as PostModel
 from .. import db
+from .post import Post
 
 class Tags(SQLAlchemyObjectType):
     class Meta:
@@ -17,7 +18,7 @@ class CreateTag(graphene.Mutation):
     class Arguments:
         tag_data = TagInput(required=True)
 
-    tag = graphene.Field(lambda: Tags)
+    post = graphene.Field(lambda: Post)
     def mutate(self, info, tag_data = None):
         post = PostModel.query.filter_by(uuid=tag_data.post_id).first()
         print(post)
@@ -26,4 +27,4 @@ class CreateTag(graphene.Mutation):
 
         db.session.add(tag)
         db.session.commit()
-        return CreateTag(tag=tag)
+        return CreateTag(post=post)
