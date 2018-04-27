@@ -4,8 +4,9 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..model import Clap as ClapModel, User as UserModel, Post as PostModel
 from .. import db
 from .post import Post
+from .helpers import CustomSQLAlchemyObjectType
 
-class Clap(SQLAlchemyObjectType):
+class Clap(CustomSQLAlchemyObjectType):
     class Meta:
         model = ClapModel
         interfaces = (relay.Node, )

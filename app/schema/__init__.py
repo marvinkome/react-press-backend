@@ -1,12 +1,14 @@
 import graphene
 from graphene import relay
-from graphene_sqlalchemy import SQLAlchemyConnectionField
+from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
 from flask_jwt_extended import decode_token
+from ..model import User as UserModel
 from .user import User, UpdateProfilePic, UpdateInfo
 from .post import Post, CreatePost, UpdatePost, DeletePost
 from .comment import Comment, CreateComment, CreateReplyComment
 from .claps import Clap, CreateClap
 from .tags import Tags, CreateTag
+from .helpers import DescSortAbleConnectionField
 
 class Mutation(graphene.ObjectType):
     create_post = CreatePost.Field()
@@ -28,7 +30,7 @@ class Query(graphene.ObjectType):
     users = graphene.List(User)
     user = graphene.Field(User, uuid=graphene.Int())
     posts = graphene.List(Post, first=graphene.Int(), skip=graphene.Int())
-    all_post = SQLAlchemyConnectionField(Post)
+    all_post = DescSortAbleConnectionField(Post, sort_by=graphene.Argument(graphene.String))
     post = graphene.Field(Post, uuid=graphene.Int())
     comments = graphene.List(Comment)
 
