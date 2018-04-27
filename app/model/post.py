@@ -2,6 +2,7 @@ from flask import current_app
 from datetime import datetime
 from .. import db
 from .tags import TagsRelationship
+from .user import User
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -20,6 +21,27 @@ class Post(db.Model):
                         secondary=TagsRelationship,
                         backref=db.backref('posts', lazy='dynamic'),
                         lazy='dynamic')
+
+    @staticmethod
+    def generate_fake(count=10):
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        user_count = User.query.count()
+        
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count - 1)).first()
+            p = Post(
+                title=forgery_py.lorem_ipsum.title(3),
+                body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
+                timestamp=forgery_py.date.date(True),
+                post_pic_url='192.168.43.200:5000/uploads/Curso-React.js-Ninja-Modulo-React-Webpack.jpg',
+                author=u
+            )
+
+            db.session.add(p)
+            db.session.commit()
 
     def __repr__(self):
         return '<Post %r>' % self.title
