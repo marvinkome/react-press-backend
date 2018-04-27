@@ -3,8 +3,9 @@ from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..model import Post as PostModel, User as UserModel
 from .. import db
+from .helpers import CustomSQLAlchemyObjectType
 
-class Post(SQLAlchemyObjectType):
+class Post(CustomSQLAlchemyObjectType):
     class Meta:
         model = PostModel
         interfaces = (relay.Node, )
