@@ -31,15 +31,27 @@ class User(db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def gravatar(self, size=259, default='retro', rating='g'):
-        if request.is_secure:
-            url = 'https://secure.gravatar.com/avatar'
-        else:
-            url = 'http://www.gravatar.com/avatar'
-        hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
-        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
-            url=url, hash=hash, size=size, default=default, rating=rating
-        )
+    @staticmethod
+    def generate_fake(count=10):
+        from sqlalchemy.exc import IntegrityError
+        from random import seed
+        import forgery_py
+        
+        seed()
+        for i in range(count):
+            u = User(
+                    email=forgery_py.internet.email_address(),
+                    password=forgery_py.lorem_ipsum.word(),
+                    full_name=forgery_py.name.full_name(),
+                    description=forgery_py.lorem_ipsum.sentence(),
+                    member_since=forgery_py.date.date(True)
+                )
+            db.session.add(u)
+
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     def __repr__(self):
         return '<User %r>' % self.email
