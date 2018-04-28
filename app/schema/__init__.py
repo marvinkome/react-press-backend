@@ -1,7 +1,8 @@
 import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
-from flask_jwt_extended import decode_token
+from graphql import GraphQLError
+from flask_jwt_extended import decode_token, get_jwt_identity
 from ..model import User as UserModel
 from .user import User, UpdateProfilePic, UpdateInfo
 from .post import Post, CreatePost, UpdatePost, DeletePost
@@ -28,10 +29,9 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
     users = graphene.List(User)
-    user = graphene.Field(User, uuid=graphene.Int())
+    user = graphene.Field(User)
     posts = graphene.List(Post, first=graphene.Int(), skip=graphene.Int())
     all_post = DescSortAbleConnectionField(Post, sort_by=graphene.Argument(graphene.String))
-    post = graphene.Field(Post, uuid=graphene.Int())
     comments = graphene.List(Comment)
 
     def resolve_users(self, info):
@@ -51,18 +51,15 @@ class Query(graphene.ObjectType):
         query = Comment.get_query(info)
         return query.all()
 
-    def resolve_user(self, info , uuid):
+    def resolve_user(self, info):
         query = User.get_query(info)
-        # token = info.context.headers.get('AUTHORIZATION')
-        # token_type = decode_token(token)["type"]
-        # email = None
-        # if token_type == 'access':
-        #     email = decode_token(token)['identity']
-        # return query.filter_by(email=email).first()
-        return query.get(uuid)
+        email = get_jwt_identity()
+        if email is not None:
+            res = query.filter_by(email=email).first()
+            if res is None:
+                return GraphQLError('Email is invalid')
+            return res
 
-    def resolve_post(self, info, uuid):
-        query = Post.get_query(info)
-        return query.get(uuid)
+        return GraphQLError('You need an Access token to get this data')
 
 schema = graphene.Schema(query=Query, mutation=Mutation, types=[User, Post])

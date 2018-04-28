@@ -1,9 +1,9 @@
 import re
 import os
-from flask import request, jsonify, url_for, send_from_directory, current_app as app
+from flask import make_response, request, jsonify, url_for, send_from_directory, current_app as app
 from flask_graphql import GraphQLView
-from flask_jwt_extended import (jwt_required,
-    create_access_token, create_refresh_token, get_jwt_identity,
+from flask_jwt_extended import (jwt_required, jwt_optional, set_access_cookies, unset_jwt_cookies,
+    create_access_token, create_refresh_token, get_jwt_identity, set_refresh_cookies,
     jwt_refresh_token_required)
 from werkzeug.utils import secure_filename
 from . import main
@@ -11,13 +11,18 @@ from .. import db, jwt
 from ..model import User
 from ..schema import schema
 
-main.add_url_rule(
-    '/graphql',
-    view_func=GraphQLView.as_view(
+def graphql():
+    g = GraphQLView.as_view(
         'graphql',
         schema=schema,
+        context={'session': db.session},
         graphiql=True # for having the GraphiQL interface
     )
+    return jwt_optional(g)
+
+main.add_url_rule(
+    '/graphql',
+    view_func=graphql()
 )
 
 def validate_password(password):
@@ -56,12 +61,16 @@ def login():
 
     access_token = create_access_token(identity=user.email)
     refresh_token = create_refresh_token(identity=user.email)
-    
-    return jsonify({
+
+    resp = jsonify({
         'msg': 'Authentication successfull',
-        'access_token': access_token,
-        'refresh_token': refresh_token
+        'login': True
     })
+    
+    set_access_cookies(resp, access_token)
+    set_refresh_cookies(resp, refresh_token)
+
+    return resp
 
 @main.route('/register', methods=['POST'])
 def register():
@@ -86,11 +95,34 @@ def register():
 
     access_token = create_access_token(identity=user.email)
     refresh_token = create_refresh_token(identity=user.email)
-    return jsonify({
-        'msg': 'Profile Created',
-        'access_token': access_token,
-        'refresh_token': refresh_token
+
+    resp = jsonify({
+        'msg': 'Authentication successfull',
+        'login': True
     })
+    
+    set_access_cookies(resp, access_token)
+    set_refresh_cookies(resp, refresh_token)
+    
+    return resp
+
+@main.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    print(request.cookies)
+    current_user = get_jwt_identity()
+    access_token = create_access_token(identity=current_user)
+    ret = jsonify({
+        'msg': 'refreshed'
+    })
+    set_access_cookies(ret, access_token)
+    return ret
+
+@main.route('/logout', methods=['POST'])
+def logout():
+    resp = jsonify({'logout': True})
+    unset_jwt_cookies(resp)
+    return resp, 200
 
 @main.route('/', methods=['GET','POST'])
 def upload():
