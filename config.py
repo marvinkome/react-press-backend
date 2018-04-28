@@ -4,10 +4,21 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
-    WT_SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string' # Todo
+
+    JWT_SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string' # Todo
+
+    JWT_TOKEN_LOCATION = 'cookies'
+    JWT_COOKIE_SECURE = False # Todo
+    JWT_ACCESS_COOKIE_PATH = '/'
+    JWT_REFRESH_COOKIE_PATH = '/'
+    JWT_COOKIE_CSRF_PROTECT = True # Todo
+
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+    CORS_SUPPORTS_CREDENTIALS = True
+
     UPLOAD_FOLDER = os.path.join(basedir + '/', 'file_uploads/')
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
