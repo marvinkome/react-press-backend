@@ -31,6 +31,8 @@ promise==2.1
 PyJWT==1.4.2
 pylint==1.8.4
 PyMySQL==0.8.0
+psycopg2==2.7.3
+pycparser==2.18
 python-dateutil==2.7.2
 python-editor==1.0.3
 Rx==1.6.1
