@@ -4,8 +4,8 @@ import os
 from flask import make_response, request, jsonify, url_for, send_from_directory, current_app as app
 from flask_graphql import GraphQLView
 
-from flask_jwt_extended import (jwt_required, jwt_optional, set_access_cookies, unset_jwt_cookies,
-    create_access_token, create_refresh_token, get_jwt_identity, set_refresh_cookies,
+from flask_jwt_extended import (jwt_required, jwt_optional,
+    create_access_token, create_refresh_token, get_jwt_identity,
     jwt_refresh_token_required)
 
 from werkzeug.utils import secure_filename
@@ -63,18 +63,13 @@ def login():
             'refresh_token': None
         })
 
-    access_token = create_access_token(identity=user.email)
     refresh_token = create_refresh_token(identity=user.email)
 
-    resp = jsonify({
+    return jsonify({
         'msg': 'Authentication successfull',
-        'login': True
+        'login': True,
+        'refresh_token': refresh_token
     })
-    
-    set_access_cookies(resp, access_token)
-    set_refresh_cookies(resp, refresh_token)
-
-    return resp
 
 @main.route('/register', methods=['POST'])
 def register():
@@ -97,36 +92,23 @@ def register():
     db.session.add(user)
     db.session.commit()
 
-    access_token = create_access_token(identity=user.email)
     refresh_token = create_refresh_token(identity=user.email)
 
-    resp = jsonify({
+    return jsonify({
         'msg': 'Authentication successfull',
-        'login': True
+        'login': True,
+        'refresh_token': refresh_token
     })
-    
-    set_access_cookies(resp, access_token)
-    set_refresh_cookies(resp, refresh_token)
-    
-    return resp
 
 @main.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required
 def refresh():
-    print(request.cookies)
     current_user = get_jwt_identity()
     access_token = create_access_token(identity=current_user)
-    ret = jsonify({
-        'msg': 'refreshed'
+    return jsonify({
+        'refreshed': True,
+        'access_token': access_token
     })
-    set_access_cookies(ret, access_token)
-    return ret
-
-@main.route('/logout', methods=['POST'])
-def logout():
-    resp = jsonify({'logout': True})
-    unset_jwt_cookies(resp)
-    return resp, 200
 
 @main.route('/', methods=['GET','POST'])
 def upload():

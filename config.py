@@ -8,17 +8,9 @@ class Config:
 
     JWT_SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string' # Todo
 
-    JWT_TOKEN_LOCATION = 'cookies'
-    JWT_COOKIE_SECURE = False # Todo
-    JWT_ACCESS_COOKIE_PATH = '/'
-    JWT_REFRESH_COOKIE_PATH = '/'
-    JWT_COOKIE_CSRF_PROTECT = True # Todo
-
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_RECORD_QUERIES = True
-
-    CORS_SUPPORTS_CREDENTIALS = True
 
     UPLOAD_FOLDER = os.path.join(basedir + '/', 'file_uploads/')
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -41,8 +33,6 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SSL_DISABLE = bool(os.environ.get('SSL_DISABLE'))
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    JWT_SECRET_KEY = os.environ.get('SECRET_KEY')
     
     @classmethod
     def init_app(cls, app):
