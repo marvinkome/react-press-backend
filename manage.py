@@ -5,9 +5,11 @@ from app.model import User, Post, Comment, CommentReply, Clap, Tags
 from flask_script import Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
 
-app = create_app('default')
+
+app = create_app(os.environ.get('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
+
 @manager.command
 def profile(length=25, profile_dir=None):
     """Start the application under the code profiler."""

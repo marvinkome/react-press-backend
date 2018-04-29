@@ -2,8 +2,6 @@
 
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
-postgres_local_base = 'postgresql://postgres:123456@localhost/'
-database_name = 'api'
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string' # Todo
@@ -41,7 +39,7 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', postgres_local_base + database_name)
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SSL_DISABLE = bool(os.environ.get('SSL_DISABLE'))
     SECRET_KEY = os.environ.get('SECRET_KEY')
     JWT_SECRET_KEY = os.environ.get('SECRET_KEY')
