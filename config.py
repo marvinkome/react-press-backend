@@ -48,11 +48,6 @@ class ProductionConfig(Config):
     def init_app(cls, app):
         Config.init_app(app)
 
-class HerokuConfig(ProductionConfig):
-    @classmethod
-    def init_app(cls, app):
-        ProductionConfig.init_app(app)
-        
         # log to stderr
         import logging
         from logging import StreamHandler
@@ -62,6 +57,8 @@ class HerokuConfig(ProductionConfig):
 
         from werkzeug.contrib.fixers import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
+        
+        
 
 config = {
     'development': DevelopmentConfig,
