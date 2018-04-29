@@ -104,6 +104,7 @@ ENV/
 .vscode
 
 # sqlalchemy
+migrations
 *.sqlite
 
 # server images
