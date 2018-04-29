@@ -28,28 +28,8 @@ class Mutation(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
-    users = graphene.List(User)
     user = graphene.Field(User)
-    posts = graphene.List(Post, first=graphene.Int(), skip=graphene.Int())
     all_post = DescSortAbleConnectionField(Post, sort_by=graphene.Argument(graphene.String))
-    comments = graphene.List(Comment)
-
-    def resolve_users(self, info):
-        query = User.get_query(info)
-        return query.all()
-
-    def resolve_posts(self, info, first=None, skip=None):
-        query = Post.get_query(info)
-        qs = query.all()
-        if skip:
-            qs = qs[skip::]
-        if first:
-            qs = qs[:first]
-        return qs
-
-    def resolve_comments(self, info):
-        query = Comment.get_query(info)
-        return query.all()
 
     def resolve_user(self, info):
         query = User.get_query(info)
