@@ -1,11 +1,15 @@
 import re
 import os
+
 from flask import make_response, request, jsonify, url_for, send_from_directory, current_app as app
 from flask_graphql import GraphQLView
+
 from flask_jwt_extended import (jwt_required, jwt_optional, set_access_cookies, unset_jwt_cookies,
     create_access_token, create_refresh_token, get_jwt_identity, set_refresh_cookies,
     jwt_refresh_token_required)
+
 from werkzeug.utils import secure_filename
+from flask_sqlalchemy import get_debug_queries
 from . import main
 from .. import db, jwt
 from ..model import User
@@ -150,3 +154,12 @@ def upload():
 @main.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@main.after_app_request
+def after_request(response):
+    for query in get_debug_queries():
+        if query.duration >= app.config['FLASKY_DB_QUERY_TIMEOUT']:
+            app.logger.warning(
+                'Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' %
+                (query.statement, query.parameters, query.duration, query.context))
+    return response

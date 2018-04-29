@@ -8,6 +8,20 @@ from flask_migrate import Migrate, MigrateCommand
 app = create_app('default')
 manager = Manager(app)
 migrate = Migrate(app, db)
+@manager.command
+def profile(length=25, profile_dir=None):
+    """Start the application under the code profiler."""
+    from werkzeug.contrib.profiler import ProfilerMiddleware
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length], profile_dir=profile_dir)
+    app.run(host='192.168.43.200', port=5000)
+
+@manager.command
+def deploy():
+    """Run deployment tasks."""
+    from flask_migrate import upgrade
+    
+    # migrate database to latest revision
+    upgrade()
 
 def make_shell_context():
     return dict(
