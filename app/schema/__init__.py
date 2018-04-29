@@ -2,7 +2,7 @@ import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
 from graphql import GraphQLError
-from flask_jwt_extended import decode_token, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
 from ..model import User as UserModel
 from .user import User, UpdateProfilePic, UpdateInfo
 from .post import Post, CreatePost, UpdatePost, DeletePost

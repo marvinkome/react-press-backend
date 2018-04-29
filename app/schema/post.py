@@ -1,6 +1,9 @@
 import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyObjectType
+from graphql import GraphQLError
+from flask_jwt_extended import get_jwt_identity
+
 from ..model import Post as PostModel, User as UserModel
 from .. import db
 from .helpers import CustomSQLAlchemyObjectType
@@ -13,7 +16,6 @@ class Post(CustomSQLAlchemyObjectType):
 class PostInput(graphene.InputObjectType):
     title = graphene.String(required=True)
     body = graphene.String(required=True)
-    user_id = graphene.Int(required=True)
     post_pic_url = graphene.String()
 
 class CreatePost(graphene.Mutation):
@@ -22,8 +24,13 @@ class CreatePost(graphene.Mutation):
 
     post = graphene.Field(lambda: Post)
 
-    def mutate(self, info, post_data = None):
-        user = UserModel.query.filter_by(uuid=post_data.user_id).first()
+    def mutate(self, info, post_data=None):
+        email = get_jwt_identity()
+        if email is None:
+            return GraphQLError('You need an access token to perform this action')
+        
+        user = UserModel.query.filter_by(email=email).first()
+
         if post_data.post_pic_url is not None:
             post = PostModel(
                 title=post_data.title,
@@ -52,6 +59,10 @@ class UpdatePost(graphene.Mutation):
     post = graphene.Field(lambda: Post)
 
     def mutate(self, info, post_id, title=None, body=None, post_pic_url=None):
+        email = get_jwt_identity()
+        if email is None:
+            return GraphQLError('You need an access token to perform this action')
+
         post = PostModel.query.filter_by(uuid=post_id).first()
         if post is not None:
             if title is not None:
@@ -72,6 +83,10 @@ class DeletePost(graphene.Mutation):
     post = graphene.Field(lambda: Post)
 
     def mutate(self, info, post_id):
+        email = get_jwt_identity()
+        if email is None:
+            return GraphQLError('You need an access token to perform this action')
+            
         post = PostModel.query.filter_by(uuid=post_id).first()
         if post is not None:
             db.session.delete(post)
