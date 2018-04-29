@@ -109,3 +109,6 @@ migrations
 
 # server images
 file_uploads
+
+# shell scripts
+*.sh
