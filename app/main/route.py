@@ -82,7 +82,7 @@ def register():
             'msg': 'Password is not valid',
             'login': False,
             'refresh_token': None
-        });
+        })
 
     # Check if user exists
     if User.query.filter_by(email=email).first() is not None:
@@ -90,7 +90,7 @@ def register():
             'msg': 'Email has been taken, please use a different email or login',
             'login': False,
             'refresh_token': None
-        });
+        })
 
     user = User(
         email=email,
