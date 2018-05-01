@@ -118,33 +118,6 @@ def refresh():
         'access_token': access_token
     })
 
-@main.route('/', methods=['GET','POST'])
-def upload():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return jsonify({
-                'msg': 'no file part'
-            })
-        file = request.files['file']
-        if file.filename == '':
-            return jsonify({
-                'msg': 'no selected file'
-            })
-        if file and allowed_filename(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return jsonify({
-                'msg': 'file uploaded',
-                'url': url_for('main.uploaded_file', filename=filename)
-            })
-    return jsonify({
-        'msg': 'This is the upload path'
-    })
-
-@main.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 @main.after_app_request
 def after_request(response):
     for query in get_debug_queries():
