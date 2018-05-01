@@ -80,7 +80,15 @@ def register():
     if (validate_password(password) is False):
         return jsonify({
             'msg': 'Password is not valid',
-            'access_token': None,
+            'login': False,
+            'refresh_token': None
+        });
+
+    # Check if user exists
+    if User.query.filter_by(email=email).first() is not None:
+        return jsonify({
+            'msg': 'Email has been taken, please use a different email or login',
+            'login': False,
             'refresh_token': None
         });
 
