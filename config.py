@@ -12,7 +12,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_RECORD_QUERIES = True
 
-    UPLOAD_FOLDER = os.path.join(basedir + '/', 'file_uploads/')
+    UPLOAD_FOLDER = os.path.join(basedir + '/', 'tmp/')
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
     FLASKY_DB_QUERY_TIMEOUT = 0.5
 
