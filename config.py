@@ -2,6 +2,7 @@
 
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
+mydir = os.path.dirname(__file__)
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string' # Todo
@@ -12,7 +13,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_RECORD_QUERIES = True
 
-    UPLOAD_FOLDER = os.path.join(basedir + '/', 'tmp/')
+    UPLOAD_FOLDER = os.path.join(mydir + '/', 'tmp/')
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
     FLASKY_DB_QUERY_TIMEOUT = 0.5
 
