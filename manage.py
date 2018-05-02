@@ -24,7 +24,15 @@ def deploy():
     
     # migrate database to latest revision
     init()
+    migrate()
     upgrade()
+
+@manager.command
+def upgrade_db():
+    """Run deployment tasks."""
+    from flask_migrate import upgrade, init, migrate
+    
+    # migrate database to latest revision
     upgrade()
 
 def make_shell_context():
