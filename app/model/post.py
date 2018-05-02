@@ -8,10 +8,10 @@ class Post(db.Model):
     __tablename__ = 'posts'
 
     uuid = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(128), index=True)
+    title = db.Column(db.String(256), index=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    post_pic_url = db.Column(db.String(128))
+    post_pic_url = db.Column(db.String(256))
 
     author_id = db.Column(db.Integer, db.ForeignKey('users.uuid'))
 
