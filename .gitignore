@@ -105,7 +105,6 @@ ENV/
 
 # sqlalchemy
 *sqlite
-migrations
 
 # server images
 file_uploads

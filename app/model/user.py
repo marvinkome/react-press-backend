@@ -13,7 +13,7 @@ class User(db.Model):
     full_name = db.Column(db.Text)
     description = db.Column(db.Text)
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
-    gravatar_url = db.Column(db.String(128), unique=True)
+    gravatar_url = db.Column(db.String(256))
 
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
