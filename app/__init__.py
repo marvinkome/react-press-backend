@@ -19,10 +19,9 @@ def create_app(config_name):
 
     db.init_app(app)
     jwt.init_app(app)
-    cors.init_app(app, resources={"*": {"origin": app.config['CLIENT_SIDE_ORIGIN']}})
+    cors.init_app(app, resources={"*": {"origins": app.config['CLIENT_SIDE_ORIGIN']}})
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
     return app
-    
