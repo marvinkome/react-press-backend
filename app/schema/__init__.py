@@ -5,7 +5,7 @@ from graphql import GraphQLError
 from flask_jwt_extended import get_jwt_identity
 from ..model import User as UserModel
 from .user import User, UpdateProfilePic, UpdateInfo
-from .post import Post, CreatePost, UpdatePost, DeletePost
+from .post import Post, CreatePost, UpdatePost, DeletePost, ViewPost
 from .comment import Comment, CreateComment, CreateReplyComment
 from .claps import Clap, CreateClap
 from .tags import Tags, CreateTag
@@ -15,6 +15,7 @@ class Mutation(graphene.ObjectType):
     create_post = CreatePost.Field()
     update_post = UpdatePost.Field()
     delete_post = DeletePost.Field()
+    view_post = ViewPost.Field()
 
     create_tag = CreateTag.Field()
 

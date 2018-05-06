@@ -12,6 +12,7 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     post_pic_url = db.Column(db.String(256))
+    views = db.Column(db.Integer, default=0)
 
     author_id = db.Column(db.Integer, db.ForeignKey('users.uuid'))
 

@@ -23,7 +23,7 @@ def deploy():
     from flask_migrate import upgrade, init, migrate
     
     # migrate database to latest revision
-    init()
+    # init()
     migrate()
     upgrade()
 

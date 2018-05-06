@@ -18,6 +18,25 @@ class PostInput(graphene.InputObjectType):
     body = graphene.String(required=True)
     post_pic_url = graphene.String()
 
+class ViewPost(graphene.Mutation):
+    class Arguments:
+        post_id = graphene.Int(required=True)
+
+    post = graphene.Field(lambda: Post)
+
+    def mutate(self, info, post_id):
+        post = PostModel.query.filter_by(uuid=post_id).first()
+        if post is not None:
+            views = post.views
+            if views is not None:
+                post.views += 1
+            else:
+                post.views = 1
+
+        db.session.add(post)
+        db.session.commit()
+        return ViewPost(post=post)
+        
 class CreatePost(graphene.Mutation):
     class Arguments:
         post_data = PostInput(required=True)
