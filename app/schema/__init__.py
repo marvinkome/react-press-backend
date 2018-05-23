@@ -30,6 +30,7 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
     user = graphene.Field(User)
+    public_user = graphene.Field(User, name=graphene.String())
     all_post = DescSortAbleConnectionField(Post, sort_by=graphene.Argument(graphene.String))
 
     def resolve_user(self, info):
@@ -42,5 +43,10 @@ class Query(graphene.ObjectType):
             return res
 
         return GraphQLError('You need an Access token to get this data')
+
+    def resolve_public_user(self, info, name):
+        query = User.get_query(info)
+        res = query.filter(UserModel.full_name.ilike('%'+ name +'%')).first()
+        return res
 
 schema = graphene.Schema(query=Query, mutation=Mutation, types=[User, Post])

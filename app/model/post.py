@@ -37,7 +37,7 @@ class Post(db.Model):
                 title=forgery_py.lorem_ipsum.title(3),
                 body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
                 timestamp=forgery_py.date.date(True),
-                post_pic_url='192.168.43.200:5000/uploads/Curso-React.js-Ninja-Modulo-React-Webpack.jpg',
+                post_pic_url=None,
                 author=u
             )
 

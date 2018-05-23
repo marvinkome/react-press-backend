@@ -15,7 +15,7 @@ def profile(length=25, profile_dir=None):
     """Start the application under the code profiler."""
     from werkzeug.contrib.profiler import ProfilerMiddleware
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length], profile_dir=profile_dir)
-    app.run(host='192.168.43.200', port=5000)
+    app.run(host='0.0.0.1', port=5000)
 
 @manager.command
 def deploy():
@@ -48,7 +48,7 @@ def make_shell_context():
     )
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
-# manager.add_command('runserver')
+manager.add_command('runserver', Server('0.0.0.0'))
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':

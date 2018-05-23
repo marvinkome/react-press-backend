@@ -20,7 +20,7 @@ def graphql():
         'graphql',
         schema=schema,
         context={'session': db.session},
-        graphiql=True # for having the GraphiQL interface
+        graphiql= True # for having the GraphiQL interface
     )
     return jwt_optional(g)
 
