@@ -29,10 +29,10 @@ Mako==1.0.7
 MarkupSafe==1.0
 mccabe==0.6.1
 promise==2.1
+psycopg2==2.7.4
 PyJWT==1.4.2
 pylint==1.8.4
 PyMySQL==0.8.0
-Psycopg==2.7.4
 python-dateutil==2.7.2
 python-editor==1.0.3
 python-engineio==2.1.1
