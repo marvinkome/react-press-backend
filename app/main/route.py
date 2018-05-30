@@ -15,20 +15,6 @@ from .. import db, jwt
 from ..model import User
 from ..schema import schema
 
-def graphql():
-    g = GraphQLView.as_view(
-        'graphql',
-        schema=schema,
-        context={'session': db.session},
-        graphiql= True # for having the GraphiQL interface
-    )
-    return jwt_optional(g)
-
-main.add_url_rule(
-    '/graphql',
-    view_func=graphql()
-)
-
 def validate_password(password):
     regExp = re.compile('^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|\
                         ((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})')
@@ -41,6 +27,19 @@ def validate_password(password):
 def allowed_filename(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+def graphql():
+    graphqli = os.environ.get('USE_GRAPHQLI') or False
+    g = GraphQLView.as_view(
+        'graphql',
+        schema=schema,
+        context={'session': db.session},
+        graphiql= graphqli
+    )
+
+    return jwt_optional(g)
+
+main.add_url_rule('/graphql', view_func=graphql())
 
 @main.route('/login', methods=['POST','GET'])
 def login():
