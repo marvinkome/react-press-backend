@@ -4,3 +4,4 @@ from .post import Post
 from .comment import Comment, CommentReply
 from .claps import Clap
 from .tags import Tags, TagsRelationship
+from .notifications import Notification

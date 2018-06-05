@@ -9,6 +9,7 @@ from .post import Post, CreatePost, UpdatePost, DeletePost, ViewPost
 from .comment import Comment, CreateComment, CreateReplyComment
 from .claps import Clap, CreateClap
 from .tags import Tags, CreateTag
+from .notifications import Notification
 from .helpers import DescSortAbleConnectionField
 
 class Mutation(graphene.ObjectType):
@@ -29,24 +30,39 @@ class Mutation(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
-    user = graphene.Field(User)
-    public_user = graphene.Field(User, name=graphene.String())
+
     all_post = DescSortAbleConnectionField(Post, sort_by=graphene.Argument(graphene.String))
+
+    user = graphene.Field(User)
+    notifications = graphene.List(Notification, email=graphene.String(), sort=graphene.Boolean())
+    public_user = graphene.Field(User, name=graphene.String())
 
     def resolve_user(self, info):
         query = User.get_query(info)
         email = get_jwt_identity()
-        if email is not None:
-            res = query.filter_by(email=email).first()
-            if res is None:
-                return GraphQLError('Email is invalid')
-            return res
-
-        return GraphQLError('You need an Access token to get this data')
+        if email is None:
+            return GraphQLError('You need an Access token to get this data')
+            
+        res = query.filter_by(email=email).first()
+        if res is None:
+            return GraphQLError('Token is invalid')
+        
+        return res
 
     def resolve_public_user(self, info, name):
         query = User.get_query(info)
         res = query.filter(UserModel.full_name.ilike('%'+ name +'%')).first()
         return res
+
+    def resolve_notifications(self, info, email, sort=False):
+        query = Notification.get_query(info)
+        user = UserModel.query.filter_by(email=email).first()
+        if user is None:
+            return GraphQLError('Email is invalid')
+
+        if sort is False:
+            return query.filter_by(author=user)
+
+        return query.filter_by(author=user, read=False)
 
 schema = graphene.Schema(query=Query, mutation=Mutation, types=[User, Post])

@@ -1,14 +1,13 @@
 #!usr/bin/env python
 import os
-from app import create_app, db
-from app.model import User, Post, Comment, CommentReply, Clap, Tags
+from app import create_app, db, socket, migrate
+from app.model import User, Post, Comment, CommentReply, Clap, Tags, Notification
 from flask_script import Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
 
 
 app = create_app(os.environ.get('FLASK_CONFIG') or 'default')
 manager = Manager(app)
-migrate = Migrate(app, db)
 
 @manager.command
 def profile(length=25, profile_dir=None):
@@ -30,10 +29,14 @@ def deploy():
 @manager.command
 def upgrade_db():
     """Run deployment tasks."""
-    from flask_migrate import upgrade, init, migrate
+    from flask_migrate import upgrade
     
     # migrate database to latest revision
     upgrade()
+
+@manager.command
+def runsocket():
+    socket.run(app)
 
 def make_shell_context():
     return dict(
@@ -44,7 +47,8 @@ def make_shell_context():
         Comment=Comment,
         CommentReply=CommentReply,
         Clap=Clap,
-        Tags=Tags
+        Tags=Tags,
+        Notification=Notification
     )
 
 manager.add_command('shell', Shell(make_context=make_shell_context))

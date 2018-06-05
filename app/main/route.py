@@ -3,13 +3,12 @@ import os
 
 from flask import make_response, request, jsonify, url_for, send_from_directory, current_app as app
 from flask_graphql import GraphQLView
+from flask_sqlalchemy import get_debug_queries
 
 from flask_jwt_extended import (jwt_required, jwt_optional,
     create_access_token, create_refresh_token, get_jwt_identity,
     jwt_refresh_token_required)
 
-from werkzeug.utils import secure_filename
-from flask_sqlalchemy import get_debug_queries
 from . import main
 from .. import db, jwt
 from ..model import User
@@ -37,10 +36,6 @@ def validate_password(password):
         return True
     else:
         return False
-
-def allowed_filename(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 @main.route('/login', methods=['POST','GET'])
 def login():
