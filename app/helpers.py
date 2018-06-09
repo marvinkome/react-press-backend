@@ -2,6 +2,7 @@ from jwt import DecodeError
 from flask_jwt_extended import decode_token, create_access_token
 from flask import request
 from functools import wraps
+from operator import itemgetter
 from flask_socketio import disconnect, emit
 from . import db
 from .model import User
@@ -49,10 +50,23 @@ def generate_graphql_token(tablename, key):
     return base64.b64encode((tablename + ':' + str(key)).encode()).decode()
 
 def get_unread_notifications(user):
-    notifications = user.notifications.filter_by(read=False).all()
+    notifications = user.notifications.all()
     unread_notification_count = user.notifications.filter_by(read=False).count()
+    all_notifications = [notification.to_json() for notification in notifications]
     return dict(
-        unread_unotifications=[notification.to_json() for notification in notifications],
+        notifications=sorted(
+            all_notifications, 
+            key=itemgetter('timestamp'),
+            reverse=True
+        )[:10],
         unread_count=unread_notification_count
     )
+
+def read_all_notifications(user):
+    notifications = user.notifications.filter_by(read=False).all()
+    for notification in notifications:
+        notification.read = True
+        db.session.add(notification)
+
+    db.session.commit()
     

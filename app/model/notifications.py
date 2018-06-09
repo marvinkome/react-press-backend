@@ -28,7 +28,9 @@ class Notification(db.Model):
                 'title': self.post.title,
                 'id': generate_graphql_token('Post', self.post.uuid)
             },
-            'timestamp': self.timestamp.isoformat()
+            'timestamp': self.timestamp.isoformat(),
+            'type': self.type,
+            'read': self.read
         }
 
     def __repr__(self):
