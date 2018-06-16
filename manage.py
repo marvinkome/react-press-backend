@@ -29,9 +29,11 @@ def deploy():
 @manager.command
 def upgrade_db():
     """Run deployment tasks."""
-    from flask_migrate import upgrade
+    from flask_migrate import upgrade, init, migrate
     
     # migrate database to latest revision
+    init()
+    migrate()
     upgrade()
 
 @manager.command
