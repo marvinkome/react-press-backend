@@ -8,9 +8,11 @@ from ..model import (
     Comment as CommentModel, 
     CommentReply as CommentReplyModel, 
     Post as PostModel,
-    User as UserModel
+    User as UserModel,
+    Notification as NotificationModel
 )
-from .. import db
+from .. import db, socket
+from ..helpers import get_unread_notifications
 from .post import Post
 
 class Comment(SQLAlchemyObjectType):
@@ -42,14 +44,29 @@ class CreateComment(graphene.Mutation):
         user = UserModel.query.filter_by(email=email).first()
 
         comment = CommentModel()
+        notification = NotificationModel()
 
         if post is not None and user is not None:
             comment.body = body
             comment.post_id = post_id
             comment.author_id = user.uuid
+            
+            notification.author_id = post.author.uuid
+            notification.post_id = post.uuid
+            notification.from_author_id = user.uuid
+            notification.type = 'comment'
 
         db.session.add(comment)
+        db.session.add(notification)
         db.session.commit()
+
+        socket.emit(
+            'notifications', 
+            get_unread_notifications(post.author), 
+            room=post.author.session_id, 
+            broadcast=False
+        )
+        
         return CreateComment(post=post, comment=comment)
 
 class CreateReplyComment(graphene.Mutation):

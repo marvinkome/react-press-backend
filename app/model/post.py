@@ -18,6 +18,7 @@ class Post(db.Model):
 
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     claps = db.relationship('Clap', backref='post', lazy='dynamic')
+    notification = db.relationship('Notification', backref='post', lazy='dynamic')
     tags = db.relationship('Tags',
                         secondary=TagsRelationship,
                         backref=db.backref('posts', lazy='dynamic'),

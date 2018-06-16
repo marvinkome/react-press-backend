@@ -14,11 +14,24 @@ class User(db.Model):
     description = db.Column(db.Text)
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     gravatar_url = db.Column(db.String(256))
+    session_id = db.Column(db.String(32))
 
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
     comment_replies = db.relationship('CommentReply', backref='author', lazy='dynamic')
     claps = db.relationship('Clap', backref='author', lazy='dynamic')
+    notifications = db.relationship(
+        'Notification', 
+        backref='author', 
+        lazy='dynamic',
+        primaryjoin="Notification.author_id == User.uuid"
+    )
+    notified = db.relationship(
+        'Notification', 
+        backref='from_author', 
+        lazy='dynamic', 
+        primaryjoin="Notification.from_author_id == User.uuid"
+    )
 
     @property
     def password(self):

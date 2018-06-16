@@ -5,7 +5,6 @@ from datetime import datetime
 
 class Comment(db.Model):
     __tablename__ = 'comments'
-
     uuid = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
