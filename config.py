@@ -20,12 +20,12 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-    CLIENT_SIDE_ORIGIN = 'http://localhost:8080' # Change this if contributing
+    CLIENT_SIDE_ORIGIN = 'http://localhost:3000' # Change this if contributing
 
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
-    CLIENT_SIDE_ORIGIN = 'http://localhost:8080' # Change this if contributing
+    CLIENT_SIDE_ORIGIN = 'http://localhost:3000' # Change this if contributing
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
